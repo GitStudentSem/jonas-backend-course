@@ -18,17 +18,12 @@ const DB = process.env.DATABASE.replace(
 );
 
 mongoose
-	.connect(DB, {
-		useNewUrlParser: true,
-		useCreateIndex: true,
-		useFindAndModify: false,
-		useUnifiedTopology: true, // Выдало из ошибки
-	})
-	.then(() => styleText("DB connection successful!", "green", "bold"));
-// .catch((error) => {
-// 	styleText("DB connection Error!", "red", "bold");
-// 	console.log(error);
-// });
+	.connect(DB)
+	.then(() => styleText("DB connection successful!", "green", "bold"))
+	.catch((error) => {
+		styleText("DB connection Error!", "red", "bold");
+		console.log(error);
+	});
 
 const port = process.env.PORT || 3000;
 const server = app.listen(port, () => {
