@@ -8,6 +8,10 @@
 - DATABASE_PASSWORD
 - JWT_SECRET
 - JWT_EXPIRES_IN
+- EMAIL_USERNAME
+- EMAIL_PASSWORD
+- EMAIL_HOST
+- EMAIL_PORT
 
 Команды для запуска:
 - `npm run start:dev` - Дев сборка 
