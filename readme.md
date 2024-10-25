@@ -5,11 +5,12 @@
 - NODE_ENV
 - PORT
 - DATABASE
-- DATABASE_USERNAME
 - DATABASE_PASSWORD
+- JWT_SECRET
+- JWT_EXPIRES_IN
 
 Команды для запуска:
-- `start:dev` - Дев сборка 
-- `start:prod` - Прод сборка
-- `debug` - Запуск отладчика
+- `npm run start:dev` - Дев сборка 
+- `npm run start:prod` - Прод сборка
+- `npm run debug` - Запуск отладчика
 
