@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
+const { route } = require("../routes/tourRoutes");
 
 const signToken = (id) => {
 	return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -11,7 +12,7 @@ const signToken = (id) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
-	const { name, email, password, passwordConfirm, passwordChangedAt } =
+	const { name, email, password, passwordConfirm, passwordChangedAt, role } =
 		req.body;
 
 	const newUser = await User.create({
@@ -20,6 +21,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 		password,
 		passwordConfirm,
 		passwordChangedAt,
+		role,
 	});
 
 	const token = signToken(newUser._id);
@@ -63,8 +65,8 @@ exports.protect = catchAsync(async (req, res, next) => {
 	const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
 	// 3) Check if user still exists
-	const freshUser = await User.findById(decoded.id);
-	if (!freshUser) {
+	const curentUser = await User.findById(decoded.id);
+	if (!curentUser) {
 		return next(
 			new AppError(
 				"The user belonging to this token does not longer exist.",
@@ -74,13 +76,24 @@ exports.protect = catchAsync(async (req, res, next) => {
 	}
 
 	// 4) Check if user changed password after the token was issued
-	if (freshUser.changedPasswordAfter(decoded.iat)) {
+	if (curentUser.changedPasswordAfter(decoded.iat)) {
 		return next(
 			new AppError("User recently changed password! Please log in again.", 401),
 		);
 	}
 
 	// GRANT ACCESS TO PROTECTED ROUTE
-	req.user = freshUser;
+	req.user = curentUser;
 	next();
 });
+
+exports.restrictTo = (...roles) => {
+	return (req, res, next) => {
+		if (!roles.includes(req.user.role)) {
+			return next(
+				new AppError("You do not have permission to perform this action.", 403),
+			);
+		}
+		next();
+	};
+};
