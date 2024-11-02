@@ -3,6 +3,7 @@ const fs = require("node:fs");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const Tour = require("../../models/tourModel");
+const { styleText } = require("../../utils/logStyles");
 
 dotenv.config({ path: "./config.env" });
 
@@ -10,20 +11,18 @@ const DB = process.env.DATABASE.replace(
 	"<PASSWORD>",
 	process.env.DATABASE_PASSWORD,
 );
+
 mongoose
-	.connect(DB, {
-		useNewUrlParser: true,
-		useCreateIndex: true,
-		useFindAndModify: false,
-		useUnifiedTopology: true, // Выдало из ошибки
-	})
-	.then(() => console.log("DB connection successful!"));
+	.connect(DB)
+	.then(() => styleText("DB connection successful!", "green", "bold"))
+	.catch((error) => {
+		styleText("DB connection Error!", "red", "bold");
+		console.log(error);
+	});
 
 // Read JSON file
 
-const tours = JSON.parse(
-	fs.readFileSync(`${__dirname}/tours-simple.json`, "utf-8"),
-);
+const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours.json`, "utf-8"));
 
 // import data into DB
 const importData = async () => {
