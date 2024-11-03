@@ -81,8 +81,7 @@ const tourSchema = new mongoose.Schema(
 		],
 		guides: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
 	},
-	{ toJSON: { virtuals: true } },
-	{ toObject: { virtuals: true } },
+	{ toJSON: { virtuals: true }, toObject: { virtuals: true } },
 );
 
 tourSchema.virtual("durationWeeks").get(function () {
